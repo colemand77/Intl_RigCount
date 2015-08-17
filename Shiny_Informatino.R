@@ -25,7 +25,7 @@ Intl_Rig_Chart <- function(dataset){
                column(3, selectInput('Stack', "Stacked Chart",
                                      choices = c(TRUE, FALSE))),
                column(3, selectInput('Group', "Group by:",
-                                     choices = c("Region", "Land_Off","OPEC","Country")))
+                                     choices = c("Region", "Land_Off","OPEC","Country","none")))
       ),
       
       fluidRow(column(3, textOutput("SD"))
