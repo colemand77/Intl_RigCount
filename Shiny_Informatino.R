@@ -3,7 +3,7 @@ Intl_Rig_Chart <- function(dataset){
   require(data.table)
   require(dygraphs)
   source("DyGraph_Functions.R")
-  
+  dataset <- as.data.table(dataset)
   shinyApp(
     ui = fluidPage(
       fluidRow(
@@ -28,10 +28,10 @@ Intl_Rig_Chart <- function(dataset){
                                      choices = c("Region", "Land_Off","OPEC","Country","none")))
       ),
       
-      fluidRow(column(3, textOutput("SD"))
+      fluidRow(column(3, div(strong("From:"), textOutput("SD", inline = TRUE)))
       ),
       
-      fluidRow(column(3, textOutput("ED"))
+      fluidRow(column(3, div(strong("To:"), textOutput("ED", inline = TRUE)))
       ),
       
       fluidRow(style = "padding-bottom: 30px;",
@@ -51,7 +51,7 @@ Intl_Rig_Chart <- function(dataset){
       graph_group <- reactive({input$Group})
       
       observe({
-        countries_options <- countrylist(Region = Region(),
+        countries_options <- countrylist(data = dataset, Region = Region(),
                                          Land_Off = Land_Off(),
                                          OPEC = OPEC())
         updateSelectizeInput(session, "Countries",
@@ -62,7 +62,7 @@ Intl_Rig_Chart <- function(dataset){
       
     
       output$rigs <- renderDygraph({
-        graph_rigcount(Country = Countries(),
+        graph_rigcount(data = dataset, Country = Countries(),
                        Land_Off = Land_Off(),
                        Region = Region(),
                        OPEC = OPEC(),
@@ -74,7 +74,7 @@ Intl_Rig_Chart <- function(dataset){
         if (!is.null(input$rigs_date_window)){
           strftime(input$rigs_date_window[[1]], format = "%Y-%m%-%d")
         } else {
-          strftime(max(Rig_DT[,Date],na.rm = TRUE), format = "%Y-%m-%d")
+          strftime(max(dataset[,Date],na.rm = TRUE), format = "%Y-%m-%d")
         }
       })
       
@@ -83,7 +83,7 @@ Intl_Rig_Chart <- function(dataset){
         if(!is.null(input$rigs_date_window)){
           strftime(input$rigs_date_window[[1]], format = "%Y-%m-%d")
         } else {
-          strftime(min(Rig_DT[,Date], na.rm = TRUE), format = "%Y-%m-%d")
+          strftime(min(dataset[,Date], na.rm = TRUE), format = "%Y-%m-%d")
         }
       })
 
@@ -93,7 +93,7 @@ Intl_Rig_Chart <- function(dataset){
         if(!is.null(input$rigs_date_window)){
           strftime(input$rigs_date_window[[2]], format = "%Y-%m-%d")
         } else {
-          strftime(max(Rig_DT[,Date], na.rm = TRUE), format = "%Y-%m-%d")
+          strftime(max(dataset[,Date], na.rm = TRUE), format = "%Y-%m-%d")
         }
       })
       
@@ -101,39 +101,19 @@ Intl_Rig_Chart <- function(dataset){
       
       output$rigs_index <- renderDygraph({
         dygraph(
-          ts_rigcount_indexed(group = graph_group(), 
+          ts_rigcount_indexed(data = dataset, group = graph_group(), 
                               indexed = TRUE,
                               start_date = startDate(), 
                               end_date = endDate(),
                               Country = Countries(), Land_Off = Land_Off(), Region = Region(), OPEC = OPEC()) 
-        )
+        ) %>%
+          dyAxis(name = 'y', label = "Rig Count Index")
+          
+    
       })     
       
-      
-      
-      
-      
-      
-      
-      
-      
-#      output$rigs_index <- renderDygraph({
-#        graph_rigcount_indexed(start_date = "2000-01-01",
-#                               end_date = "2010-01-01",
-#                               Country = "Colombia",
-#                               Land_Off = "Land",
-#                               Region = "LAM",
-#                               OPEC = "FALSE",
-#                               group = "rigs"
-#                               )
-#      })
-      
-      
-#      output$brent <- renderDygraph({
-#        graph_brentPx(Countries())
-#      })
     },
-    options = list(height = 1100)
+    options = list(height = 1300)
   )    
 }
 

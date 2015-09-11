@@ -1,46 +1,27 @@
 ---
-title: "test1"
-author: "Dave"
-date: "Monday, August 10, 2015"
+title: "Breakdown of International Rig Count Change"
+author: "David Coleman"
+date: "Wednesday, September 9, 2015"
 output: html_document
+runtime: shiny
+resource_files:
+- Rig_DT.rds
+- blome.R
+- DyGraph_Functions.R
+- Rig_DT.rds
 ---
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This document was inspired by a [this post](http://oilpro.com/post/17343/comparing-international-rig-count-fall-to-us) on OilPro, which compared the change in Internatioal Rig Count to the US land rig count.  It occured to me that the "International" label included a great many regions, so I thought it might be interesting to explore a bit deeper.  As a result, we have this little to WebApp that lest you dig into the BHI International Rig count with a bit more detail.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Set filter conditions above the two charts... click and drag on the top chart to zoom in on a period of interest. The bottom chart is indexed to the first period show in the top chart.  Double-click to reset zoom.
+Play around.
 
-```{r}
+Note: Updated as of recent (August, 2015) data
+
+```{r, echo = FALSE, message = FALSE, warning=FALSE}
+library(data.table)
+source('DyGraph_Functions.R')
+source("Shiny_Informatino.R")
 Intl_Rig_Chart(Rig_DT)
-
-Rig_DT[OPEC == TRUE,sum(Count), by = .(Date, Country)]
-Rig_DT[Country == "Abu Dhabi*"]
-
-str(Rig_DT)
-
-
-
-data(sample_matrix)
-
-test1 <- as.xts(sample_matrix)
-test1
-47.67468/50.03978
-
-
-
-diff(log(test1))[-1] %>% cumsum()
-
-plot(test1)
-test1
-
 ```
-
-You can also embed plots, for example:
-
-```{r, echo=FALSE}
-plot(cars)
-Rig_DT[,sum(Count),by = Date]
-unique(Rig_DT[,Date])
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
